@@ -2,6 +2,8 @@
 
 This program encrypts and decrypts text using the Caesar cipher.
 """
+# You can use the data structures in collections for functional programming
+# import collections
 
 def check_int(string, one_or_zero):
     """ Parameters: string: String to check.
@@ -34,11 +36,28 @@ def user_input():
     while not check_int(shift, False):
         shift = input("Please type in your shift: ")
     shift = int(shift)
-    encrypt = input("Please type in 1 for encryption and 0 for decryption: ")
-    while not check_int(encrypt, True) and (encrypt != "1" or encrypt != "0"):
-        encrypt = input("Please type in 1 for encryption and 0 for decryption: ")
-    encrypt = bool(int(encrypt))
-    return text, shift, encrypt
+    encryption = input("Please type in 1 for encryption and 0 for decryption: ")
+    while not check_int(encryption, True) and (encryption != "1" or encryption != "0"):
+        encryption = input("Please type in 1 for encryption and 0 for decryption: ")
+    encryption = bool(int(encryption))
+    return text, shift, encryption
+
+def encrypt(plaintext, shift):
+    """ Parameters: plaintext: String of plaintext.
+                    shift: Integer of the amount to shift alphabet by.
+        Return: String of ciphertext.
+
+        This function takes in a string and a shift and outputs the 
+        corresponding ciphertext.
+    """
+    def to_cipher_char(char, shift):
+        alphabet_size = 26
+        if not char.isalpha():
+            return char
+        start_letter = "A" if char.isupper() else "a"
+        return chr((ord(char) - ord(start_letter) + shift) %
+                    alphabet_size + ord(start_letter))
+    return "".join([to_cipher_char(char, shift) for char in plaintext])
 
 def main():
     """ Parameters: None
@@ -46,8 +65,12 @@ def main():
 
         This function runs the code for the program.
     """
-    text, shift, encrypt = user_input()
-
+    text, shift, encryption = user_input()
+    if encryption:
+        ciphertext = encrypt(text, shift)
+        print(f"Ciphertext: {ciphertext}")
+    else:
+        pass
 
 if __name__ == "__main__":
     try:
