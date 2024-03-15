@@ -5,25 +5,6 @@ This program encrypts and decrypts text using the Caesar cipher.
 import os
 import argparse
 
-
-def check_int(string, one_or_zero):
-    """ Parameters: string: String to check.
-                    one_or_zero: Boolean if string needs to be a 1 or 0.
-
-        Return: Boolean if string is an integer
-
-        This function returns True or False if the string is an int.
-    """
-    try:
-        int(string)
-    except ValueError:
-        if one_or_zero:
-            print("You did not type in one or zero")
-        else:
-            print("You did not enter an integer!")
-        return False
-    return True
-
 def process_args():
     """ Parameters: None
         Return: argparse.Namespace object with the arguments. 
@@ -106,6 +87,12 @@ def output(text, encryption):
     return f"{'Ciphertext:' if encryption else 'Plaintext:'} {text}"
 
 def to_text(text_or_file):
+    """ Parameters: text_or_file: String that is either some text or a
+        file path.
+        Return: String of the original text or the text within the file.
+
+        This function outputs the text of a file or the string itself.
+    """
     if os.path.exists(text_or_file):
         with open(text_or_file, "r", encoding="utf-8") as file:
             text = file.read()
