@@ -59,6 +59,22 @@ def encrypt(plaintext, shift):
                     alphabet_size + ord(start_letter))
     return "".join([to_cipher_char(char, shift) for char in plaintext])
 
+def decrypt(ciphertext, shift):
+    """ Parameters: ciphertext: String of ciphertext.
+                    shift: Integer of the amount to shift alphabet by.
+        Return: String of ciphertext.
+
+        This function takes in a string and a shift and outputs the 
+        corresponding ciphertext.
+    """
+    def to_plain_char(char, shift):
+        alphabet_size = 26
+        if not char.isalpha():
+            return char
+        start_letter = "A" if char.isupper() else "a"
+        return chr((ord(char) - ord(start_letter) - shift) % alphabet_size + ord(start_letter))
+    return "".join([to_plain_char(char, shift) for char in ciphertext])
+
 def main():
     """ Parameters: None
         Return: None
@@ -70,7 +86,8 @@ def main():
         ciphertext = encrypt(text, shift)
         print(f"Ciphertext: {ciphertext}")
     else:
-        pass
+        plaintext = decrypt(text, shift)
+        print(f"Plaintext: {plaintext}")
 
 if __name__ == "__main__":
     try:
