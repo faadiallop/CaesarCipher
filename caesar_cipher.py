@@ -2,8 +2,6 @@
 
 This program encrypts and decrypts text using the Caesar cipher.
 """
-# You can use the data structures in collections for functional programming
-# import collections
 
 def check_int(string, one_or_zero):
     """ Parameters: string: String to check.
@@ -42,6 +40,21 @@ def user_input():
     encryption = bool(int(encryption))
     return text, shift, encryption
 
+def char_mapping(char, shift, encryption):
+    """ Parameters: char: String of a single character.
+                    shift: Integer of the amount to shift alphabet by.
+        Return: The corresponding encrypted or decrypted character.
+        
+        This function maps between characters for the caesar cipher.
+    """
+    alphabet_size = 26
+    if not char.isalpha():
+        return char
+    start_letter = "A" if char.isupper() else "a"
+    right_shift = 1 if encryption else -1
+    return chr((ord(char) - ord(start_letter) + (shift * right_shift)) %
+                alphabet_size + ord(start_letter))
+
 def encrypt(plaintext, shift):
     """ Parameters: plaintext: String of plaintext.
                     shift: Integer of the amount to shift alphabet by.
@@ -50,14 +63,7 @@ def encrypt(plaintext, shift):
         This function takes in a string and a shift and outputs the 
         corresponding ciphertext.
     """
-    def to_cipher_char(char, shift):
-        alphabet_size = 26
-        if not char.isalpha():
-            return char
-        start_letter = "A" if char.isupper() else "a"
-        return chr((ord(char) - ord(start_letter) + shift) %
-                    alphabet_size + ord(start_letter))
-    return "".join([to_cipher_char(char, shift) for char in plaintext])
+    return "".join([char_mapping(char, shift, True) for char in plaintext])
 
 def decrypt(ciphertext, shift):
     """ Parameters: ciphertext: String of ciphertext.
@@ -67,13 +73,17 @@ def decrypt(ciphertext, shift):
         This function takes in a string and a shift and outputs the 
         corresponding ciphertext.
     """
-    def to_plain_char(char, shift):
-        alphabet_size = 26
-        if not char.isalpha():
-            return char
-        start_letter = "A" if char.isupper() else "a"
-        return chr((ord(char) - ord(start_letter) - shift) % alphabet_size + ord(start_letter))
-    return "".join([to_plain_char(char, shift) for char in ciphertext])
+    return "".join([char_mapping(char, shift, False) for char in ciphertext])
+
+def output(text, encryption):
+    """ Parameters: text: String of text to output.
+                    encrytion: Boolean of whether the program encrypted 
+                    or not.
+        Return: None
+
+        This functions outputs the text to the screen.
+    """
+    print("Ciphertext:" if encryption else "Plaintext:", text)
 
 def main():
     """ Parameters: None
@@ -82,12 +92,8 @@ def main():
         This function runs the code for the program.
     """
     text, shift, encryption = user_input()
-    if encryption:
-        ciphertext = encrypt(text, shift)
-        print(f"Ciphertext: {ciphertext}")
-    else:
-        plaintext = decrypt(text, shift)
-        print(f"Plaintext: {plaintext}")
+    output_text = encrypt(text, shift) if encryption else decrypt(text, shift)
+    output(output_text, encryption)
 
 if __name__ == "__main__":
     try:
