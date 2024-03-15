@@ -36,12 +36,18 @@ def process_args():
         type=str,
         help="A string to implement the cipher on."
     )
+
+    def raise_(exception):
+        """Raises the given exception. Used in a lambda function."""
+        raise exception
+
     parser.add_argument(
         "shift",
-        type=int,
-        help="An integer of the amount to shift alphabet by."
+        type=lambda s: int(s) if 0 <= int(s) < 26
+                       else raise_(ValueError("Invalid shift value.")),
+        help=("An integer of the amount to shift alphabet by. "
+              "This value must be in the range [0...26)")
     )
-    #Fix this to only take in a 1 or a 0.
     parser.add_argument(
         "-d",
         "--decrypt",
