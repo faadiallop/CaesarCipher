@@ -94,7 +94,7 @@ def output(text, run_encryption, file):
             f.write(text)
         return f"Output has been written to {file_name}!"
     else:
-        return f"{'Ciphertext:' if run_encryption else 'Plaintext:'} {text}"
+        return f"{'Ciphertext' if run_encryption else 'Plaintext'}: {text}"
 
 def to_text(text_or_file):
     """ Parameters: text_or_file: String that is either some text or a
