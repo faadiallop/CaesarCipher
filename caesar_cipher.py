@@ -2,7 +2,9 @@
 
 This program encrypts and decrypts text using the Caesar cipher.
 """
+import os
 import argparse
+
 
 def check_int(string, one_or_zero):
     """ Parameters: string: String to check.
@@ -32,9 +34,9 @@ def process_args():
         description="Runs caesar cipher on given text."
     )
     parser.add_argument(
-        "text",
+        "text_or_file",
         type=str,
-        help="A string to implement the cipher on."
+        help="A string or file to implement the cipher on."
     )
 
     def raise_(exception):
@@ -56,7 +58,7 @@ def process_args():
               "This is set to False by default.")
     )
     args = parser.parse_args()
-    return args.text, args.shift, not args.decrypt
+    return args.text_or_file, args.shift, not args.decrypt
 
 def char_mapping(char, shift, encryption):
     """ Parameters: char: String of a single character.
@@ -103,13 +105,22 @@ def output(text, encryption):
     """
     return f"{'Ciphertext:' if encryption else 'Plaintext:'} {text}"
 
+def to_text(text_or_file):
+    if os.path.exists(text_or_file):
+        with open(text_or_file, "r", encoding="utf-8") as file:
+            text = file.read()
+    else:
+        text = text_or_file
+    return text
+
 def main():
     """ Parameters: None
         Return: None
 
         This function runs the code for the program.
     """
-    text, shift, run_encrypt = process_args()
+    text_or_file, shift, run_encrypt = process_args()
+    text = to_text(text_or_file)
     output_text = encrypt(text, shift) if run_encrypt else decrypt(text, shift)
     print(output(output_text, run_encrypt))
 
