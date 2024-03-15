@@ -2,6 +2,7 @@
 
 This program encrypts and decrypts text using the Caesar cipher.
 """
+import argparse
 
 def check_int(string, one_or_zero):
     """ Parameters: string: String to check.
@@ -21,24 +22,35 @@ def check_int(string, one_or_zero):
         return False
     return True
 
-def user_input():
+def process_args():
     """ Parameters: None
-        Return: 3-tuple of the input text, shift for caesar cipher and
-        whether to encrypt or decrypt the text.
+        Return: argparse.Namespace object with the arguments. 
 
-        This function reads in input from the user and returns those
-        values.
+        This function takes in arguments from the user and returns them. 
     """
-    text = input("Please type in your text: ")
-    shift = input("Please type in your shift: ")
-    while not check_int(shift, False):
-        shift = input("Please type in your shift: ")
-    shift = int(shift)
-    encryption = input("Please type in 1 for encryption and 0 for decryption: ")
-    while not check_int(encryption, True) and (encryption != "1" or encryption != "0"):
-        encryption = input("Please type in 1 for encryption and 0 for decryption: ")
-    encryption = bool(int(encryption))
-    return text, shift, encryption
+    parser = argparse.ArgumentParser(
+        description="Runs caesar cipher on given text."
+    )
+    parser.add_argument(
+        "text",
+        type=str,
+        help="A string to implement the cipher on."
+    )
+    parser.add_argument(
+        "shift",
+        type=int,
+        help="An integer of the amount to shift alphabet by."
+    )
+    #Fix this to only take in a 1 or a 0.
+    parser.add_argument(
+        "-d",
+        "--decrypt",
+        action="store_true",
+        help=("An boolean of whether to decrypt or not. "
+              "This is set to False by default.")
+    )
+    args = parser.parse_args()
+    return args.text, args.shift, not args.decrypt
 
 def char_mapping(char, shift, encryption):
     """ Parameters: char: String of a single character.
@@ -81,9 +93,9 @@ def output(text, encryption):
                     or not.
         Return: None
 
-        This functions outputs the text to the screen.
+        This functions returns the output of the users program call.
     """
-    print("Ciphertext:" if encryption else "Plaintext:", text)
+    return f"{'Ciphertext:' if encryption else 'Plaintext:'} {text}"
 
 def main():
     """ Parameters: None
@@ -91,9 +103,9 @@ def main():
 
         This function runs the code for the program.
     """
-    text, shift, encryption = user_input()
-    output_text = encrypt(text, shift) if encryption else decrypt(text, shift)
-    output(output_text, encryption)
+    text, shift, run_encrypt = process_args()
+    output_text = encrypt(text, shift) if run_encrypt else decrypt(text, shift)
+    print(output(output_text, run_encrypt))
 
 if __name__ == "__main__":
     try:
