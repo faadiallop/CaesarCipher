@@ -5,10 +5,9 @@ This program encrypts and decrypts text using the Caesar cipher.
 import os
 import argparse
 
-
 def process_args():
     """ Parameters: None
-        Return: argparse.Namespace object with the arguments. 
+        Return: The arguments from the argparse.Namespace object.
 
         This function takes in arguments from the user and returns them. 
     """
