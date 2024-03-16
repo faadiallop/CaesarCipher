@@ -3,7 +3,12 @@
 This program encrypts and decrypts text using the Caesar cipher.
 """
 import os
+import heapq
+import string
 import argparse
+from functools import reduce
+from collections import namedtuple, Counter
+from frequencies import letter_frequencies
 
 def process_args():
     """ Parameters: None
@@ -71,12 +76,51 @@ def encrypt(plaintext, shift):
 def decrypt(ciphertext, shift):
     """ Parameters: ciphertext: String of ciphertext.
                     shift: Integer of the amount to shift alphabet by.
-        Return: String of ciphertext.
+        Return: String of plaintext.
 
         This function takes in a string and a shift and outputs the 
-        corresponding ciphertext.
+        corresponding plaintext.
     """
     return "".join([char_mapping(char, shift, False) for char in ciphertext])
+
+def get_dictionary(path):
+    words = set()
+    with open(path, "r", encoding="utf-8") as file:
+        for line in file:
+            words.add(line.rstrip("\n").upper())
+    return words
+
+def decrypt_freq_analysis(ciphertext, letter_freqs, dictionary):
+    """ Parameters: ciphertext: String of ciphertext.
+                    letter_freqs: Dictionary of letter frequencies. 
+        Return: NamedTuple of plaintext and shift.
+
+        This function takes in a string and outputs the corresponding
+        plaintext and shift using frequency analysis.
+    """
+    letter_count = Counter([l for l in ciphertext.upper() if l.isalpha()])
+    # Returns the most frequent letter from the cipher text
+    most_freq_text = reduce(lambda k1, k2: k1 if letter_count[k1] > letter_count[k2] else k2, letter_count)
+    heap = [(-value, key) for key, value in letter_freqs.items()]
+    heapq.heapify(heap)
+    while True:
+        _, most_freq, = heapq.heappop(heap)
+        shift = abs(ord(most_freq_text) - ord(most_freq))
+        plaintext = decrypt(ciphertext, shift)
+
+        table = str.maketrans("", "", string.punctuation)
+        plaintext_iter = plaintext.upper().split()
+        count = 0
+        for word in plaintext_iter:
+            if word in dictionary:
+                count += 1
+        if count / len(plaintext_iter) >= .5:
+            break
+        
+    result_shift = namedtuple("result_shift", ["plaintext", "shift"])
+    result = result_shift(plaintext, shift)
+    return result
+
 
 def output(text, run_encryption, file):
     """ Parameters: text: String that is either some text or a
@@ -116,6 +160,11 @@ def main():
 
         This function runs the code for the program.
     """
+    path = "/usr/share/dict/words"
+    dictionary = get_dictionary(path)
+    result = decrypt_freq_analysis(open("input_to_decrypt", "r", encoding="utf-8").read(), letter_frequencies, dictionary)
+    print(result.plaintext, result.shift)
+    return
     text_or_file, shift, run_encrypt = process_args()
     text = to_text(text_or_file)
     output_text = encrypt(text, shift) if run_encrypt else decrypt(text, shift)
